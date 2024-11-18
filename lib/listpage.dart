@@ -1,8 +1,5 @@
-import 'dart:math';
-import 'package:flutter/cupertino.dart';
+// import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'model.dart';
 
 import 'new_folder.dart';
@@ -20,36 +17,15 @@ class ListPage extends StatefulWidget{
   State<ListPage> createState() => _ListPageState();
 }
 
-
-// class ExpTile extends StatelessWidget{
-
-//   final String title;
-//   final List<String> items;
-
-//   const ExpTile ({super.key, required this.title, required this.items});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ExpansionTile(
-//       title:Text(title),
-//       children:
-//         FolderMenu(),
-//         items.map((item) => ListTile(title: Text(item))).toList(),
-      
-//     );
-//   }
-// }
-
 class _ListPageState extends State<ListPage>{
 
   // double upperRotateValue = 0;
   // double bottomRotateValue = 0;
-
   // bool opened = false;
 
-  List<String> _folderTitles = [];
-  List<String> folderTitles = [];
-  List<String> _taskTitles = [];
+  List<String> _folderTitles = []; // 通常のリスト型 [string1,string2,string3]
+  List<List<String>> _taskTitles = []; // Listの中にListをネストする [[],[],[]......]
+
   @override
   void initState(){
     super.initState();
@@ -57,40 +33,14 @@ class _ListPageState extends State<ListPage>{
   }
 
   Future<void> getData() async {
-    final List<Folder> jsondata = await TodoApi.fetchData();
-    List<String> taskTitles = [];
-    // print(jsondata);
-    for (var folder in jsondata) {
-      folderTitles.add(folder.title);
-      print(folderTitles);
-      for (var task in folder.tasks){
-        taskTitles.add(task.title);
-        print(taskTitles);
-      }
-    }
+    final List<Folder> folders = await TodoApi.fetchData();
     setState((){
-      _folderTitles = folderTitles;
-      _taskTitles = taskTitles;
+      _folderTitles = folders.map((folder) => folder.title).toList(); // folder階層のtitle mapメソッドで取り出した値をfolderに格納しているので、引数であるfolderという名前である必要はない
+      _taskTitles = folders.map((folder) => folder.tasks.map((task) => task.title).toList()).toList(); // tasksプロパティに値を持つフォルダからしかデータを持ってこない
     });
   }
 
-  // void startAnimation(){
-  //   setState((){
-  //     if(!opened){
-  //       upperRotateValue = pi /7.1;
-  //       bottomRotateValue = -pi /7.1;
-  //     }
-  //     else{
-  //       upperRotateValue = 0;
-  //       bottomRotateValue = 0;
-  //     }
-  //     opened = !opened;
-  //   });
-  // }
-
-
-
-    @override
+  @override
   Widget build(BuildContext context){
     return Scaffold(
       body:SafeArea(
@@ -125,7 +75,8 @@ class _ListPageState extends State<ListPage>{
                       shrinkWrap: true,
                       controller: _scrollController,
                       itemCount: _folderTitles.length,
-                      itemBuilder: (context, index){
+                      itemBuilder: (context, folderIndex){
+                        // ListViewを2つ作成するので、第2引数は別の名前にする
                         return  Column(
                           children: [
                             Container(
@@ -135,12 +86,11 @@ class _ListPageState extends State<ListPage>{
                             ),
                               child: ExpansionTile(
                                 title: Text(
-                                  _folderTitles[index],
+                                  _folderTitles[folderIndex], // itemBuilderで宣言した第2引数をキーに値を取得
                                   style: TextStyle(
                                     fontSize: 12,
                                   ),
                                 ),
-                                // title: _folderTitle[index]['title'],
                                 children: <Widget>[
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -181,8 +131,9 @@ class _ListPageState extends State<ListPage>{
                                     physics: AlwaysScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     controller: _scrollController,
-                                    itemCount: _taskTitles.length,
-                                    itemBuilder: (context, index){
+                                    itemCount: _taskTitles[folderIndex].length,
+                                    itemBuilder: (context, taskIndex){
+                                      // 第2引数は上位層のものと別名に
                                       return  Column(
                                         children: [
                                           ListTile(
@@ -194,7 +145,7 @@ class _ListPageState extends State<ListPage>{
                                               child: Padding(
                                                 padding: const EdgeInsets.all(10),
                                                 child: Text(
-                                                  _taskTitles[index],
+                                                  _taskTitles[folderIndex][taskIndex], // _taskTitlesの型は<List<List<String>>>になっているため、2つのインデックスで取得する必要がある
                                                   style:TextStyle(
                                                     fontSize: 12,
                                                   ),  
@@ -206,44 +157,6 @@ class _ListPageState extends State<ListPage>{
                                       );
                                     }
                                   ),
-                                  // Container(
-                                  //   child: ListTile(
-                                  //     title: Container(
-                                  //       decoration: BoxDecoration(
-                                  //         color: Colors.blueGrey[100],
-                                  //         borderRadius: BorderRadius.circular(10),
-                                  //       ),
-                                  //       child: Padding(
-                                  //         padding: const EdgeInsets.all(10),
-                                  //         child: Text(
-                                  //           'nest_1',
-                                  //           style:TextStyle(
-                                  //             fontSize: 12,
-                                  //           ),  
-                                  //         ),
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                  // Container(
-                                  //   child: ListTile(
-                                  //     title: Container(
-                                  //       decoration: BoxDecoration(
-                                  //         color: Colors.blueGrey[100],
-                                  //         borderRadius: BorderRadius.circular(10),
-                                  //       ),
-                                  //       child: Padding(
-                                  //         padding: const EdgeInsets.all(10),
-                                  //         child: Text(
-                                  //           'nest_2',
-                                  //           style:TextStyle(
-                                  //             fontSize: 12,
-                                  //           ),  
-                                  //         ),
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                             ),
@@ -415,7 +328,6 @@ class _ListPageState extends State<ListPage>{
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    // builder:((context) => Todo()),
                                     builder:((context) => NewTask()),
                                   )
                                 );

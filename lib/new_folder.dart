@@ -1,24 +1,34 @@
 import 'package:flutter/material.dart';
 import 'listpage.dart';
+import 'api_request.dart';
 
 class NewFolder extends StatefulWidget{
 
   const NewFolder({super.key});
 
   @override
-  State<NewFolder> createState() => _NewFolderState();
+  State<NewFolder> createState() => NewFolderState();
 }
 
-class _NewFolderState extends State<NewFolder>{
+class NewFolderState extends State<NewFolder>{
 
-  String _folder = '';
-  // String _password = '';
+  static final TextEditingController textController = TextEditingController();
+  static String folder = '';
 
 
   @override
   void initState(){
     super.initState();
   }
+
+
+  @override
+  void dispose() {
+    textController.dispose(); // メモリリークを防ぐためにdisposeする
+    super.dispose();
+  }
+
+
 
   @override
   Widget build(BuildContext context){
@@ -44,6 +54,7 @@ class _NewFolderState extends State<NewFolder>{
                   width: 250,
                   height: 50,
                   child: TextField(
+                    controller: textController,
                     decoration:InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "新しいフォルダ名",
@@ -53,33 +64,12 @@ class _NewFolderState extends State<NewFolder>{
                     ),
                     onChanged: (String value){
                       setState(){
-                        _folder = value;
+                        folder = value;
                       }
                     }
                   ),
                 ),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.all(15),
-              //   child: Container(
-              //     width: 250,
-              //     height: 50,
-              //     child: TextField(
-              //       decoration:InputDecoration(
-              //         border: OutlineInputBorder(),
-              //         labelText: "パスワード",
-              //           labelStyle: TextStyle(
-              //           fontSize: 12,
-              //         )
-              //       ),
-              //       onChanged: (String value){
-              //         setState(){
-              //           _mail = value;
-              //         }
-              //       }
-              //     ),
-              //   ),
-              // ),
               Padding(
                 padding: EdgeInsets.all(5),
                 child: Container(
@@ -101,7 +91,8 @@ class _NewFolderState extends State<NewFolder>{
                         borderRadius: BorderRadius.circular(5)
                       )
                     ),
-                    onPressed:(){
+                    onPressed:() async {
+                      await TodoApi.postFolder();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
