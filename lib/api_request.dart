@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'model.dart';
 import 'new_folder.dart';
@@ -36,10 +37,11 @@ class TodoApi{
     }
   }
 
-  static Future<void> postFolder() async {
+  static Future<void> postFolder(TextEditingController controller) async {
 
     final url = Uri.parse(requestFolder);
-    final String folderTitle = NewFolderState.textController.text;
+    final String folderTitle = controller.text;
+    // final String folderTitle = NewFolderState.textController.text;
 
     Map<String, String> headers = {'content-type': 'application/json'};
     String body = json.encode({'title': folderTitle, 'user_id': 2 });
@@ -56,23 +58,26 @@ class TodoApi{
     }
   } 
 
-  static Future<void> postTask() async {
+  static Future<void> postTask(TextEditingController controller,int value) async {
 
     final url = Uri.parse(requestTask);
-    final String taskTitle = NewFolderState.textController.text;
+    final String taskTitle = controller.text;
+    final int folderId = value;
 
     Map<String, String> headers = {'content-type': 'application/json'};
-    String body = json.encode({'title': taskTitle, 'folder_id': 1 });
+    String body = json.encode({'title': taskTitle, 'folder_id': folderId });
 
     final responsePostFolder = await http.post(
       url,
       headers: headers, 
       body: body
       );
-    if (responsePostFolder.statusCode != 200) {
-      print('folder is created');
+    if (responsePostFolder.statusCode != 201) {
+      print('task is created');
+      print(body);
     } else{
-      print('create folder is failed');
+      print('create task is failed');
+      print(body);
     }
   }
 

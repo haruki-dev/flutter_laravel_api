@@ -7,12 +7,12 @@ class NewFolder extends StatefulWidget{
   const NewFolder({super.key});
 
   @override
-  State<NewFolder> createState() => NewFolderState();
+  State<NewFolder> createState() => _NewFolderState();
 }
 
-class NewFolderState extends State<NewFolder>{
+class _NewFolderState extends State<NewFolder>{
 
-  static final TextEditingController textController = TextEditingController();
+  final TextEditingController textController = TextEditingController();
   static String folder = '';
 
 
@@ -92,7 +92,7 @@ class NewFolderState extends State<NewFolder>{
                       )
                     ),
                     onPressed:() async {
-                      await TodoApi.postFolder();
+                      await TodoApi.postFolder(textController);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
