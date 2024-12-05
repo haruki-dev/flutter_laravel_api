@@ -6,8 +6,8 @@ import 'new_folder.dart';
 
 
 class TodoApi{
-  static const String requestFolder = 'http://10.0.2.2/api/folders';  // Androidエミュレーターを使用する場合は左記のIPアドレスでないとアクセスできない。通常はlocalhostおよび127.0.0.1:8000とかでいい
-  static const String requestTask = 'http://10.0.2.2/api/tasks';  // Androidエミュレーターを使用する場合は左記のIPアドレスでないとアクセスできない。通常はlocalhostおよび127.0.0.1:8000とかでいい
+  static const String requestFolder = 'http://10.0.2.2/api/folders/';  // Androidエミュレーターを使用する場合は左記のIPアドレスでないとアクセスできない。通常はlocalhostおよび127.0.0.1:8000とかでいい
+  static const String requestTask = 'http://10.0.2.2/api/tasks/';  // Androidエミュレーターを使用する場合は左記のIPアドレスでないとアクセスできない。通常はlocalhostおよび127.0.0.1:8000とかでいい
 
 
   static Future<List<Folder>> fetchData() async { 
@@ -82,6 +82,24 @@ class TodoApi{
   }
 
 
+  static Future<void> deleteData(int value) async { 
+
+    final deleteId = value;
+    final deleteFolder = "$requestFolder$deleteId";
+    final responseDeleteFolder = await http.delete(Uri.parse(deleteFolder));  // requestFolderの文字列をURI形式に変換して、それに対してgetリクエストを送っている
+
+    if (responseDeleteFolder.statusCode == 200){
+      print('folder is deleted');
+      print(deleteId);
+      print(deleteFolder);
+      print(responseDeleteFolder);
+    } else {
+      print(deleteId);
+      print(deleteFolder);
+      print(responseDeleteFolder);
+      throw Exception('failed');
+    }
+  }
 
 
 

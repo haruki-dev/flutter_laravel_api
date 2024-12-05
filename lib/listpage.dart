@@ -1,5 +1,6 @@
 // import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'model.dart';
 
 import 'new_folder.dart';
@@ -22,9 +23,12 @@ class _ListPageState extends State<ListPage>{
   // double upperRotateValue = 0;
   // double bottomRotateValue = 0;
   // bool opened = false;
-
+  List<Folder> folders = [];
   List<String> _folderTitles = []; // 通常のリスト型 [string1,string2,string3]
+  List<int> _folderIds = []; // 通常のリスト型 [string1,string2,string3]
   List<List<String>> _taskTitles = []; // Listの中にListをネストする [[],[],[]......]
+  // String _deleteFolderId = '';
+  int _deleteFolderId = 0;
 
   @override
   void initState(){
@@ -36,9 +40,31 @@ class _ListPageState extends State<ListPage>{
     final List<Folder> folders = await TodoApi.fetchData();
     setState((){
       _folderTitles = folders.map((folder) => folder.title).toList(); // folder階層のtitle mapメソッドで取り出した値をfolderに格納しているので、引数であるfolderという名前である必要はない
+      _folderIds = folders.map((folder) => folder.id).toList(); // folder階層のtitle mapメソッドで取り出した値をfolderに格納しているので、引数であるfolderという名前である必要はない
       _taskTitles = folders.map((folder) => folder.tasks.map((task) => task.title).toList()).toList(); // tasksプロパティに値を持つフォルダからしかデータを持ってこない
     });
   }
+
+
+  Future<void> deleteData(int deleteFolderId) async {
+      setState((){
+        _deleteFolderId = deleteFolderId+1;
+      });
+    final deleteFolder = await TodoApi.deleteData(_deleteFolderId);
+        deleteFolder;
+  }
+  // Future<void> deleteData(String? deleteValue) async {
+  //   final  deleteFolder = await TodoApi.deleteData(_deleteFolder);
+  //   if (deleteValue is String){
+  //     setState((){
+  //       _deleteFolderId = deleteValue;
+  //       _deleteFolder = _folderTitles.indexOf(deleteValue)+1;
+  //       print(_deleteFolderId);
+  //       print(_deleteFolder);
+  //       deleteFolder;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context){
@@ -74,6 +100,7 @@ class _ListPageState extends State<ListPage>{
                       physics: AlwaysScrollableScrollPhysics(),
                       shrinkWrap: true,
                       controller: _scrollController,
+                      // itemCount: folders.length,
                       itemCount: _folderTitles.length,
                       itemBuilder: (context, folderIndex){
                         // ListViewを2つ作成するので、第2引数は別の名前にする
@@ -84,86 +111,117 @@ class _ListPageState extends State<ListPage>{
                               color: Colors.blueGrey[50],
                               borderRadius: BorderRadius.circular(10),
                             ),
-                              child: ExpansionTile(
-                                title: Text(
-                                  _folderTitles[folderIndex], // itemBuilderで宣言した第2引数をキーに値を取得
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(7),
-                                        child: Text(
-                                          '全選択',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.blue
-                                          ),
-                                          ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(7),
-                                        child: Text(
-                                          '全解除',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.blue
-                                          ),
-                                          ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(7),
-                                        child: Text(
-                                          '選択項目の削除',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.red
-                                          ),
+                                child: Stack(
+                                  children: [
+                                    ExpansionTile(
+                                      title: Text(
+                                        _folderTitles[folderIndex], // itemBuilderで宣言した第2引数をキーに値を取得
+                                        style: TextStyle(
+                                          fontSize: 12,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  ListView.builder(
-                                    physics: AlwaysScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    controller: _scrollController,
-                                    itemCount: _taskTitles[folderIndex].length,
-                                    itemBuilder: (context, taskIndex){
-                                      // 第2引数は上位層のものと別名に
-                                      return  Column(
-                                        children: [
-                                          ListTile(
-                                            title: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.blueGrey[100],
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(10),
-                                                child: Text(
-                                                  _taskTitles[folderIndex][taskIndex], // _taskTitlesの型は<List<List<String>>>になっているため、2つのインデックスで取得する必要がある
-                                                  style:TextStyle(
-                                                    fontSize: 12,
-                                                  ),  
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(7),
+                                              child: Text(
+                                                '全選択',
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.blue
+                                                ),
+                                                ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(7),
+                                              child: Text(
+                                                '全解除',
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.blue
+                                                ),
+                                                ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(7),
+                                              child: Text(
+                                                '選択項目の削除',
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.red
                                                 ),
                                               ),
                                             ),
+                                          ],
+                                        ),
+                                        ListView.builder(
+                                          physics: AlwaysScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          controller: _scrollController,
+                                          itemCount: _taskTitles[folderIndex].length,
+                                          itemBuilder: (context, taskIndex){
+                                            // 第2引数は上位層のものと別名に
+                                            return  Column(
+                                              children: [
+                                                ListTile(
+                                                  title: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.blueGrey[100],
+                                                      borderRadius: BorderRadius.circular(10),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(10),
+                                                      child: Text(
+                                                        _taskTitles[folderIndex][taskIndex], // _taskTitlesの型は<List<List<String>>>になっているため、2つのインデックスで取得する必要がある
+                                                        style:TextStyle(
+                                                          fontSize: 12,
+                                                        ),  
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]
+                                            );
+                                          }
+                                        ),
+                                      ],
+                                    ),
+                                    
+                                    Positioned(
+                                      child: SizedBox(
+                                        width:30,
+                                        height:30,
+                                        child: FloatingActionButton(
+                                          onPressed:(){
+                                              deleteData(folderIndex);
+                                              print(folderIndex);
+                                              getData();
+                                          },
+                                          
+                                          child: Icon(
+                                            Icons.delete,
+                                            size: 25,
+                                            color: Colors.red[400],
                                           ),
-                                        ]
-                                      );
-                                    }
-                                  ),
-                                ],
-                              ),
+                                          backgroundColor: Colors.transparent,
+                                          elevation: 0.0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(50)
+                                          ),
+                                        ),
+                                      ),
+                                      top:15,
+                                      left:285,
+                                    ),
+                                  ],
+                                ),
                             ),
                             Container(
                               color: Colors.white,
                               height:20,
-                            )
+                            ),
                           ],
                         );
                       },
