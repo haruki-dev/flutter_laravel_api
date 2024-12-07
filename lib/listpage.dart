@@ -1,4 +1,5 @@
 // import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'model.dart';
@@ -26,9 +27,12 @@ class _ListPageState extends State<ListPage>{
   List<Folder> folders = [];
   List<String> _folderTitles = []; // 通常のリスト型 [string1,string2,string3]
   List<int> _folderIds = []; // 通常のリスト型 [string1,string2,string3]
+
   List<List<String>> _taskTitles = []; // Listの中にListをネストする [[],[],[]......]
+  List<List<int>> _taskIds = []; // Listの中にListをネストする [[],[],[]......]
   // String _deleteFolderId = '';
   int _deleteFolderId = 0;
+  int _deleteTaskId = 0;
 
   @override
   void initState(){
@@ -42,29 +46,105 @@ class _ListPageState extends State<ListPage>{
       _folderTitles = folders.map((folder) => folder.title).toList(); // folder階層のtitle mapメソッドで取り出した値をfolderに格納しているので、引数であるfolderという名前である必要はない
       _folderIds = folders.map((folder) => folder.id).toList(); // folder階層のtitle mapメソッドで取り出した値をfolderに格納しているので、引数であるfolderという名前である必要はない
       _taskTitles = folders.map((folder) => folder.tasks.map((task) => task.title).toList()).toList(); // tasksプロパティに値を持つフォルダからしかデータを持ってこない
+      _taskIds = folders.map((folder) => folder.tasks.map((task) => task.id).toList()).toList(); // folder階層のtitle mapメソッドで取り出した値をfolderに格納しているので、引数であるfolderという名前である必要はない
     });
   }
 
 
-  Future<void> deleteData(int deleteFolderId) async {
-      setState((){
-        _deleteFolderId = deleteFolderId+1;
-      });
-    final deleteFolder = await TodoApi.deleteData(_deleteFolderId);
-        deleteFolder;
+  Future<void> deleteDataFolder(int deleteFolderId) async {
+    setState((){
+      _deleteFolderId = deleteFolderId;
+    });
+    final deleteFolder = await TodoApi.deleteFolder(_deleteFolderId);
+      deleteFolder;
   }
-  // Future<void> deleteData(String? deleteValue) async {
-  //   final  deleteFolder = await TodoApi.deleteData(_deleteFolder);
-  //   if (deleteValue is String){
-  //     setState((){
-  //       _deleteFolderId = deleteValue;
-  //       _deleteFolder = _folderTitles.indexOf(deleteValue)+1;
-  //       print(_deleteFolderId);
-  //       print(_deleteFolder);
-  //       deleteFolder;
-  //     });
-  //   }
-  // }
+
+
+  Future<void> deleteDataTask(int deleteTaskId) async {
+    setState((){
+      _deleteTaskId = deleteTaskId;
+    });
+    final deleteTask = await TodoApi.deleteTask(_deleteTaskId);
+      deleteTask;
+  }
+
+
+void _showAlertDialogFolder(BuildContext context, String folderName, int deleteFolderId) {
+    final _folderName = folderName;
+
+    showCupertinoDialog<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text('フォルダの削除'),
+        content: Text('「$_folderName」を削除します。よろしいですか？'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            /// This parameter indicates this action is the default,
+            /// and turns the action's text to bold text.
+            isDestructiveAction: true,
+            onPressed: () {
+              deleteDataFolder(deleteFolderId);
+              print(deleteFolderId);
+              Navigator.pop(context);
+              getData();
+            },
+            child: const Text('削除する'),
+          ),
+          CupertinoDialogAction(
+            /// This parameter indicates the action would perform
+            /// a destructive action such as deletion, and turns
+            /// the action's text color to red.
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('戻る'),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+void _showAlertDialogTask(BuildContext context, String taskName,int deletetaskId) {
+    // final folderName = _folderTitles.indexOf(deletefolderTitle);
+    final _taskName = taskName;
+
+    showCupertinoDialog<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text('フォルダの削除'),
+        content: Text('「$_taskName」を削除します。よろしいですか？'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            /// This parameter indicates this action is the default,
+            /// and turns the action's text to bold text.
+            isDestructiveAction: true,
+            onPressed: () {
+              deleteDataTask(deletetaskId);
+              print(deletetaskId);
+              getData();
+              Navigator.pop(context);
+            },
+            child: const Text('削除する'),
+          ),
+          CupertinoDialogAction(
+            /// This parameter indicates the action would perform
+            /// a destructive action such as deletion, and turns
+            /// the action's text color to red.
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('戻る'),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context){
@@ -100,8 +180,7 @@ class _ListPageState extends State<ListPage>{
                       physics: AlwaysScrollableScrollPhysics(),
                       shrinkWrap: true,
                       controller: _scrollController,
-                      // itemCount: folders.length,
-                      itemCount: _folderTitles.length,
+                      itemCount: _folderIds.length,
                       itemBuilder: (context, folderIndex){
                         // ListViewを2つ作成するので、第2引数は別の名前にする
                         return  Column(
@@ -165,22 +244,45 @@ class _ListPageState extends State<ListPage>{
                                             // 第2引数は上位層のものと別名に
                                             return  Column(
                                               children: [
-                                                ListTile(
-                                                  title: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.blueGrey[100],
-                                                      borderRadius: BorderRadius.circular(10),
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.all(10),
-                                                      child: Text(
-                                                        _taskTitles[folderIndex][taskIndex], // _taskTitlesの型は<List<List<String>>>になっているため、2つのインデックスで取得する必要がある
-                                                        style:TextStyle(
-                                                          fontSize: 12,
-                                                        ),  
+                                                Stack(
+                                                  children: [
+                                                    ListTile(
+                                                    title: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.blueGrey[100],
+                                                        borderRadius: BorderRadius.circular(10),
+                                                      ),
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.all(10),
+                                                        child: Text(
+                                                          _taskTitles[folderIndex][taskIndex], // _taskTitlesの型は<List<List<String>>>になっているため、2つのインデックスで取得する必要がある
+                                                          style:TextStyle(
+                                                            fontSize: 12,
+                                                          ),  
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
+                                                    Positioned(
+                                                      child: SizedBox(
+                                                        width:30,
+                                                        height:30,
+                                                        child: CupertinoButton(
+                                                          onPressed:(){
+                                                            _showAlertDialogTask(context, _taskTitles[folderIndex][taskIndex],_taskIds[folderIndex][taskIndex]);
+                                                          },
+                                                          
+                                                          child: Icon(
+                                                            Icons.delete,
+                                                            size: 20,
+                                                            color: Colors.red[400],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      top:3,
+                                                      left:280,
+                                                    ),
+                                                  ]
                                                 ),
                                               ]
                                             );
@@ -193,27 +295,20 @@ class _ListPageState extends State<ListPage>{
                                       child: SizedBox(
                                         width:30,
                                         height:30,
-                                        child: FloatingActionButton(
+                                        child: CupertinoButton(
                                           onPressed:(){
-                                              deleteData(folderIndex);
-                                              print(folderIndex);
-                                              getData();
+                                            _showAlertDialogFolder(context, _folderTitles[folderIndex], _folderIds[folderIndex]);
                                           },
                                           
                                           child: Icon(
                                             Icons.delete,
-                                            size: 25,
+                                            size: 20,
                                             color: Colors.red[400],
-                                          ),
-                                          backgroundColor: Colors.transparent,
-                                          elevation: 0.0,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(50)
                                           ),
                                         ),
                                       ),
-                                      top:15,
-                                      left:285,
+                                      top:3,
+                                      left:260,
                                     ),
                                   ],
                                 ),

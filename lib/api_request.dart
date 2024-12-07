@@ -82,7 +82,7 @@ class TodoApi{
   }
 
 
-  static Future<void> deleteData(int value) async { 
+  static Future<void> deleteFolder(int value) async { 
 
     final deleteId = value;
     final deleteFolder = "$requestFolder$deleteId";
@@ -97,6 +97,27 @@ class TodoApi{
       print(deleteId);
       print(deleteFolder);
       print(responseDeleteFolder);
+      throw Exception('failed');
+    }
+  }
+
+
+
+  static Future<void> deleteTask(int value) async { 
+
+    final deleteId = value;
+    final deleteTask = "$requestTask$deleteId";
+    final responseDeleteTask = await http.delete(Uri.parse(deleteTask));  // requestFolderの文字列をURI形式に変換して、それに対してgetリクエストを送っている
+
+    if (responseDeleteTask.statusCode == 200){
+      print('Task is deleted');
+      print(deleteId);
+      print(deleteTask);
+      print(responseDeleteTask);
+    } else {
+      print(deleteId);
+      print(deleteFolder);
+      print(responseDeleteTask);
       throw Exception('failed');
     }
   }
