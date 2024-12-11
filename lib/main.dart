@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-// import 'todo.dart';
-import 'api_request.dart';
-// import 'welcome.dart';
 import 'login.dart';
 import 'signup.dart';
+// import 'todo.dart';
+// import 'api_request.dart';
+// import 'welcome.dart';
 
 
 void main() {
@@ -18,7 +18,7 @@ class MainApp extends StatelessWidget {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TodoApp_with_Laravel',
-      home:Welcome(
+      home:const Welcome(
         title:'WelcomePage'
       ),
       theme: ThemeData(
@@ -40,139 +40,111 @@ class Welcome extends StatelessWidget{
     return Scaffold(
       body:Column(
         children: [
-          Container(
-            // color: Colors.blue[300],
-            child: const Padding(
-              padding: EdgeInsets.all(120)
-            ),
+          const Padding(
+            padding: EdgeInsets.all(120)
           ),
           Expanded(
-            child: Container(
-              // color: Colors.yellow[300],
-              child: Column(
-                children: [
-                  Container(
-                    // black bar animation will add
-                    child: Text(
-                      'Hello,World!\nLet\'s start this App.',
-                      textAlign:TextAlign.center,
+            child: Column(
+              children: [
+                const Text(
+                  'Hello,World!\nLet\'s start this App.',
+                  textAlign:TextAlign.center,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: GestureDetector(
+                        onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: ((context) => const SignUpPage()),
+                          )
+                        );
+                      },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top:130,left:30,right:30),
+                          child:Image.asset(
+                            'assets/person.png',
+                            width:50,
+                            height: 50,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  Container(
-                    child:Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: GestureDetector(
-                            onTap: (){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: ((context) => SignUpPage()),
-                              )
-                            );
-                          },
-                            child: Container(
-                              // color: Colors.green[300],
-                              child: Padding(
-                                padding: EdgeInsets.only(top:130,left:30,right:30),
-                                child:Image.asset(
-                                  'assets/person.png',
-                                  width:50,
-                                  height: 50,
-                                ),
-                              ),
-                            ),
+                    Center(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: ((context) => const LoginPage()),
+                            )
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top:130,left:30,right:30),
+                          child: Image.asset(
+                            'assets/login.png',
+                            width:50,
+                            height: 50,
                           ),
                         ),
-                        Center(
-                          child: GestureDetector(
-                            onTap: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: ((context) => LoginPage()),
-                                )
-                              );
-                            },
-                            child: Container(
-                              // color: Colors.green[300],
-                              child: Padding(
-                                padding: EdgeInsets.only(top:130,left:30,right:30),
-                                child: Image.asset(
-                                  'assets/login.png',
-                                  width:50,
-                                  height: 50,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    child:Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: GestureDetector(
-                            onTap: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: ((context) => SignUpPage()),
-                                )
-                              );
-                            },
-                            child: Container(
-                              // color: Colors.green[300],
-                              child: Padding(
-                                padding: EdgeInsets.only(top:30,left:20,right:27),
-                                child: Text(
-                                  'ユーザー登録',
-                                  style: TextStyle(
-                                    fontSize:12
-                                  )
-                                )
-                              ),
-                            ),
-                          ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: ((context) => const SignUpPage()),
+                            )
+                          );
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.only(top:30,left:20,right:27),
+                          child: Text(
+                            'ユーザー登録',
+                            style: TextStyle(
+                              fontSize:12
+                            )
+                          )
                         ),
-                        Center(
-                          child: GestureDetector(
-                            onTap: (){Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: ((context)=> LoginPage()),
-                              ));
-                            },
-                            child: Container(
-                              // color: Colors.green[300],
-                              child: Padding(
-                                padding: EdgeInsets.only(top:30,left:20,right:25),
-                                child: Text(
-                                  'ログイン',
-                                  style: TextStyle(
-                                    fontSize:12
-                                  )
-                                )
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    Center(
+                      child: GestureDetector(
+                        onTap: (){Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: ((context)=> const LoginPage()),
+                          ));
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.only(top:30,left:20,right:25),
+                          child: Text(
+                            'ログイン',
+                            style: TextStyle(
+                              fontSize:12
+                            )
+                          )
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          Container(
-            // color: Colors.red[300],
-            child: const Padding(
-              padding: EdgeInsets.all(120),
-            ),
+          const Padding(
+            padding: EdgeInsets.all(120),
           ),
         ],
       )

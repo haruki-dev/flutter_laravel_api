@@ -11,9 +11,6 @@ class LoginPage extends StatefulWidget{
 
 class _LoginPageState extends State<LoginPage>{
 
-  String _mail = '';
-  // String _password = '';
-
 
   @override
   void initState(){
@@ -29,22 +26,20 @@ class _LoginPageState extends State<LoginPage>{
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(30),
-                child: Container(
-                  child: Text(
-                    "ログイン",
-                    textAlign: TextAlign.center,
-                  ),
+              const Padding(
+                padding: EdgeInsets.all(30),
+                child: Text(
+                  "ログイン",
+                  textAlign: TextAlign.center,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15),
-                child: Container(
+                child: SizedBox(
                   width: 250,
                   height: 50,
                   child: TextField(
-                    decoration:InputDecoration(
+                    decoration:const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "メールアドレス",
                       labelStyle: TextStyle(
@@ -52,20 +47,17 @@ class _LoginPageState extends State<LoginPage>{
                       )
                     ),
                     onChanged: (String value){
-                      setState(){
-                        _mail = value;
-                      }
                     }
                   ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15),
-                child: Container(
+                child: SizedBox(
                   width: 250,
                   height: 50,
                   child: TextField(
-                    decoration:InputDecoration(
+                    decoration:const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "パスワード",
                         labelStyle: TextStyle(
@@ -73,29 +65,19 @@ class _LoginPageState extends State<LoginPage>{
                       )
                     ),
                     onChanged: (String value){
-                      setState(){
-                        _mail = value;
-                      }
                     }
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 child: Container(
                   width: 250,
                   height: 50,
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
-                    child:Text(
-                      "送信",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white
-                      ),
-                      ),
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size(50,40),
+                      minimumSize: const Size(50,40),
                       backgroundColor: Colors.blueGrey[400],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5)
@@ -105,10 +87,17 @@ class _LoginPageState extends State<LoginPage>{
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:((context) => ListPage()),
+                          builder:((context) => const ListPage()),
                         )
                       );
                     },
+                    child:const Text(
+                      "送信",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white
+                      ),
+                      ),
                   ),
                 ),
               ),

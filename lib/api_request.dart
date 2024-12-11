@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'model.dart';
-import 'new_folder.dart';
+// import 'new_folder.dart';
 
 
 class TodoApi{
@@ -51,10 +51,10 @@ class TodoApi{
       headers: headers, 
       body: body
       );
-    if (responsePostFolder.statusCode != 200) {
-      print('folder is created');
+    if (responsePostFolder.statusCode == 201) {
+      debugPrint('folder is created');
     } else{
-      print('create folder is failed');
+      debugPrint('create folder is failed');
     }
   } 
 
@@ -72,12 +72,12 @@ class TodoApi{
       headers: headers, 
       body: body
       );
-    if (responsePostFolder.statusCode != 201) {
-      print('task is created');
-      print(body);
+    if (responsePostFolder.statusCode == 201) {
+      debugPrint('task is created');
+      debugPrint(body);
     } else{
-      print('create task is failed');
-      print(body);
+      debugPrint('create task is failed');
+      debugPrint(body);
     }
   }
 
@@ -89,14 +89,14 @@ class TodoApi{
     final responseDeleteFolder = await http.delete(Uri.parse(deleteFolder));  // requestFolderの文字列をURI形式に変換して、それに対してgetリクエストを送っている
 
     if (responseDeleteFolder.statusCode == 200){
-      print('folder is deleted');
-      print(deleteId);
-      print(deleteFolder);
-      print(responseDeleteFolder);
+      debugPrint('folder is deleted');
+      debugPrint("$deleteId");
+      debugPrint(deleteFolder);
+      debugPrint("$responseDeleteFolder");
     } else {
-      print(deleteId);
-      print(deleteFolder);
-      print(responseDeleteFolder);
+      debugPrint("$deleteId");
+      debugPrint(deleteFolder);
+      debugPrint("$responseDeleteFolder");
       throw Exception('failed');
     }
   }
@@ -110,19 +110,72 @@ class TodoApi{
     final responseDeleteTask = await http.delete(Uri.parse(deleteTask));  // requestFolderの文字列をURI形式に変換して、それに対してgetリクエストを送っている
 
     if (responseDeleteTask.statusCode == 200){
-      print('Task is deleted');
-      print(deleteId);
-      print(deleteTask);
-      print(responseDeleteTask);
+      debugPrint('Task is deleted');
+      debugPrint("$deleteId");
+      debugPrint(deleteTask);
+      debugPrint("$responseDeleteTask");
     } else {
-      print(deleteId);
-      print(deleteFolder);
-      print(responseDeleteTask);
+      debugPrint("$deleteId");
+      debugPrint(deleteTask);
+      debugPrint("$responseDeleteTask");
       throw Exception('failed');
     }
   }
 
 
+  static Future<void> updateFolder(TextEditingController controller, int value) async {
+
+    final updateId = value;
+    final updateFolder = "$requestFolder$updateId";
+    // final responseupdateFolder = await http.delete(Uri.parse(updateFolder));  // requestFolderの文字列をURI形式に変換して、それに対してgetリクエストを送っている
+
+
+
+    final url = Uri.parse(updateFolder);
+    final String folderTitle = controller.text;
+
+    Map<String, String> headers = {'content-type': 'application/json'};
+    String body = json.encode({'title': folderTitle});
+
+    final responseUpdateFolder = await http.put(
+      url,
+      headers: headers, 
+      body: body
+      );
+    if (responseUpdateFolder.statusCode == 200) {
+      debugPrint('folder is updated');
+    } else{
+      debugPrint('update folder is failed');
+      debugPrint(body);
+    }
+  } 
+
+
+  static Future<void> updateTask(TextEditingController controller,int value1, int value2) async {
+
+    final updateId = value2;
+    final updateTask = "$requestTask$updateId";
+
+    final url = Uri.parse(updateTask);
+    final String taskTitle = controller.text;
+    final int folderId = value1;
+
+    Map<String, String> headers = {'content-type': 'application/json'};
+    String body = json.encode({'title': taskTitle, 'folder_id': folderId });
+
+    final responseUpdateTask = await http.put(
+      url,
+      headers: headers, 
+      body: body
+      );
+    if (responseUpdateTask.statusCode == 200) {
+      debugPrint('task is updated');
+      debugPrint(body);
+    } else{
+      debugPrint('update task is failed');
+      debugPrint(body);
+    }
+  }
 
 
 

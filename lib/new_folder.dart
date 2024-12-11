@@ -13,7 +13,6 @@ class NewFolder extends StatefulWidget{
 class _NewFolderState extends State<NewFolder>{
 
   final TextEditingController textController = TextEditingController();
-  static String folder = '';
 
 
   @override
@@ -39,23 +38,21 @@ class _NewFolderState extends State<NewFolder>{
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(30),
-                child: Container(
-                  child: Text(
-                    "フォルダを作成しよう",
-                    textAlign: TextAlign.center,
-                  ),
+              const Padding(
+                padding: EdgeInsets.all(30),
+                child: Text(
+                  "フォルダを作成しよう",
+                  textAlign: TextAlign.center,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15),
-                child: Container(
+                child: SizedBox(
                   width: 250,
                   height: 50,
                   child: TextField(
                     controller: textController,
-                    decoration:InputDecoration(
+                    decoration:const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "新しいフォルダ名",
                       labelStyle: TextStyle(
@@ -63,29 +60,19 @@ class _NewFolderState extends State<NewFolder>{
                       )
                     ),
                     onChanged: (String value){
-                      setState(){
-                        folder = value;
-                      }
                     }
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 child: Container(
                   width: 250,
                   height: 50,
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
-                    child:Text(
-                      "作成",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white
-                      ),
-                      ),
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size(50,40),
+                      minimumSize: const Size(50,40),
                       backgroundColor: Colors.blueGrey[400],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5)
@@ -93,13 +80,23 @@ class _NewFolderState extends State<NewFolder>{
                     ),
                     onPressed:() async {
                       await TodoApi.postFolder(textController);
+                      // ウィジェットの BuildContext がまだ有効かどうかをチェック
+                      if (!context.mounted) return;
+                      // 非同期処理中にcontextを書かないこと
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:((context) => ListPage()),
+                          builder:((context) => const ListPage()),
                         )
                       );
                     },
+                    child:const Text(
+                      "作成",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white
+                      ),
+                      ),
                   ),
                 ),
               ),

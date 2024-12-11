@@ -10,7 +10,6 @@ class SignUpPage extends StatefulWidget{
 
 class _SignUpPageState extends State<SignUpPage>{
 
-  String _mail = '';
   // String _password = '';
 
 
@@ -28,22 +27,20 @@ class _SignUpPageState extends State<SignUpPage>{
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(30),
-                child: Container(
-                  child: Text(
-                    "新規登録",
-                    textAlign: TextAlign.center,
-                  ),
+              const Padding(
+                padding: EdgeInsets.all(30),
+                child: Text(
+                  "新規登録",
+                  textAlign: TextAlign.center,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15),
-                child: Container(
+                child: SizedBox(
                   width: 250,
                   height: 50,
                   child: TextField(
-                    decoration:InputDecoration(
+                    decoration:const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "メールアドレス",
                       labelStyle: TextStyle(
@@ -51,20 +48,17 @@ class _SignUpPageState extends State<SignUpPage>{
                       )
                     ),
                     onChanged: (String value){
-                      setState(){
-                        _mail = value;
-                      }
                     }
                   ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15),
-                child: Container(
+                child: SizedBox(
                   width: 250,
                   height: 50,
                   child: TextField(
-                    decoration:InputDecoration(
+                    decoration:const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "パスワード",
                         labelStyle: TextStyle(
@@ -72,20 +66,17 @@ class _SignUpPageState extends State<SignUpPage>{
                       )
                     ),
                     onChanged: (String value){
-                      setState(){
-                        _mail = value;
-                      }
                     }
                   ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15),
-                child: Container(
+                child: SizedBox(
                   width: 250,
                   height: 50,
                   child: TextField(
-                    decoration:InputDecoration(
+                    decoration:const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "パスワード再入力",
                         labelStyle: TextStyle(
@@ -93,35 +84,32 @@ class _SignUpPageState extends State<SignUpPage>{
                       )
                     ),
                     onChanged: (String value){
-                      setState(){
-                        _mail = value;
-                      }
                     }
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 child: Container(
                   width: 250,
                   height: 50,
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
-                    child:Text(
-                      "送信",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white
-                      ),
-                      ),
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size(50,40),
+                      minimumSize: const Size(50,40),
                       backgroundColor: Colors.blueGrey[400],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5)
                       )
                     ),
                     onPressed:(){},
+                    child:const Text(
+                      "送信",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white
+                      ),
+                      ),
                   ),
                 ),
               ),
